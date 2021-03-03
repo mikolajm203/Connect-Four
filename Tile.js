@@ -1,30 +1,30 @@
 class Tile{
+  static get TileSize(){return 100;}
   static t_count = 0;
   constructor(){
-    this.r = tileSize - 10;
+    this.r = Tile.TileSize - 10;
     this.c_y = 0;
     this.cy_a = 0;
     this.cy_v = 0;
     this.c_x = 50;
     this.is_laying = false;
     if(Tile.t_count % 2 === 0){
-      this.color = "#007b83";
+      this.color = "#007b83"; // blue
     }
     else{
-      this.color = "#ff847c";
+      this.color = "#ff847c"; // red
     }
     Tile.t_count++;
   }
   update(selCol, columns, index){
     if(this.c_y === 0){
-      this.c_x = selCol * tileSize + 50;
+      this.c_x = selCol * Tile.TileSize + 50;
     }
     this.cy_v += this.cy_a;
     this.c_y += this.cy_v;
     if(this.c_y >= height - 50 - 100 * columns[index]){
       this.land(columns, index);
     }
-    win_state = check_win();
     return columns;
   }
   show(){
