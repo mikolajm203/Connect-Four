@@ -1,60 +1,45 @@
 var canv;
-var selCol;
-var tiles = [];
 var columns = [0, 0, 0, 0, 0, 0, 0];
-var index;
-var board = [[0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0]];
-let game = new Game();
+let game;
 let startButton;
 function mousePressed(){
-  tiles[Tile.t_count - 1].is_laying = false;
-  tiles[Tile.t_count - 1].c_y = 0;
-  tiles[Tile.t_count - 1].cy_a = 1;
-  index = selCol;
+  if(game.state == GameState.IN_GAME){
+    game.tiles[Tile.t_count - 1].state = TileState.FLYING;
+  }
 }
 
 //-----------MAIN FUNCTIONS-----------------
 function setup() {
+  game = new Game();
   canv = createCanvas(700, 700);
   var x = (windowWidth - width) / 2;
   var y = (windowHeight - height) / 2 + 50;
   canv.position(x, y);
-  tiles.push(new Tile());
   startButton = createButton("Start");
   startButton.style("background-color", color("#ff847c"));
   startButton.position(x + 350, y + 350);
-  startButton.mousePressed(() => {  setTimeout(() => { game.state = State.IN_GAME;
-                                    removeElements();}, 1000); });
+  startButton.mousePressed(() => {  setTimeout(() => { game.state = GameState.IN_GAME;
+                                    startButton.remove();}, 1000); });
 }
 
 function draw() {
   background(42, 54, 59);
+
   switch(game.state){
-    case State.MAIN_MENU:
+    case GameState.MAIN_MENU:
       break;
-    case State.IN_GAME:
+    case GameState.IN_GAME:
+      // --------- Setup background scenery -------------
       for(var i = 0; i <= 7; i++){
         strokeWeight(1);
         stroke("#fecea8");
         line(Tile.TileSize * i, 0, Tile.TileSize * i, height);
       }
-      selCol = Math.floor(mouseX/Tile.TileSize);
-      columns = tiles[Tile.t_count - 1].update(selCol, columns, index);
-      tiles.forEach(element => {
-        element.show();
-      });
-      if(tiles[Tile.t_count - 1].is_laying){
-        tiles.push(new Tile());
-      }
-      //game.update();
+      // -------------------------------------------------
+      game.update(game.heights);
+      game.checkWin();
       break;
-    case State.POST_GAME:
+    case GameState.POST_GAME:
       break;
   }
 }
